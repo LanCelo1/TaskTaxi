@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/my_trip"
+        android:title="Мои поездки"
+        android:icon="@drawable/ic_location_new"
+        />
+
+    <item android:id="@+id/my_wallet"
+        android:title="Способы оплаты"
+        android:icon="@drawable/ic_wallet"
+        />
+
+    <item android:id="@+id/saved_addresses"
+        android:title="Избранные адреса"
+        android:icon="@drawable/ic_star"
+        />
+
+</menu>

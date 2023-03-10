@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--    <gradient android:endX="42" android:endY="28" android:startX="14" android:startY="28" android:type="linear">-->
+
+    <!--        <item android:color="#212121" android:offset="0" />-->
+
+    <!--        <item android:color="#585858" android:offset="1" />-->
+
+    <!--    </gradient>-->
+    <item>
+        <shape android:shape="oval">
+            <gradient android:endColor="@color/colorBottomItemEnd"
+                android:startColor="@color/colorBottomItemStart"
+                android:centerColor="@color/colorBottomItemEnd"
+                android:angle="285"
+                android:type="linear" />
+        </shape>
+    </item>
+</selector>
