@@ -19,6 +19,7 @@
         />
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:headerLayout="@layout/header_layout"
@@ -40,14 +41,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ilova haqida"
+                android:text="О приложении"
                 android:fontFamily="@font/roboto_medium"
                 android:textColor="@color/colorPrimary"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Versiya 6.1.4 (6667)"
+                android:text="Версия 6.1.4 (6667)"
                 android:fontFamily="@font/roboto_regular"
                 />
         </LinearLayout>

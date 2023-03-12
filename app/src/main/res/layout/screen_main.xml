@@ -20,7 +20,8 @@
         mapbox:mapbox_cameraTargetLng="-74.0060"
         mapbox:mapbox_cameraZoom="9.0" />
 
-    <FrameLayout
+
+    <ImageView
         android:id="@+id/btn_menu"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -30,88 +31,78 @@
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_menu" />
-    </FrameLayout>
-
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_notification"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
         android:background="@drawable/bg_selectable"
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_notification"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_notification" />
-    </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
-        android:layout_width="200dp"
+        android:layout_width="100dp"
         android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_board_left"
         android:elevation="@dimen/cardview_default_elevation"
-        app:layout_constraintEnd_toStartOf="@+id/btn_notification"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayoutCompat2"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@+id/btn_menu"
         app:layout_constraintTop_toTopOf="@+id/btn_menu">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_board_left">
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:text="Свободен"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center"
-                android:text="Свободен"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat2"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_board_right"
+        android:elevation="@dimen/cardview_default_elevation"
+        app:layout_constraintEnd_toStartOf="@+id/btn_notification"
+        app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat"
+        app:layout_constraintTop_toTopOf="@+id/btn_menu">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_board_right">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Занят"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Занят"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="12dp"
@@ -119,7 +110,6 @@
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         mapbox:layout_constraintBottom_toBottomOf="parent"
@@ -133,66 +123,41 @@
             android:src="@drawable/ic_thunder" />
     </FrameLayout>
 
-    <!--    <ImageView-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:src="@drawable/ic_car"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="0.5" />-->
-
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_plus"
         android:layout_width="37dp"
         android:layout_height="37dp"
+        android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
         android:alpha="0.8"
         android:background="@drawable/bg_selectable"
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_plus"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintVertical_bias="0.55">
+        app:layout_constraintVertical_bias="0.55" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_plus" />
-    </FrameLayout>
-
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_minus"
         android:layout_width="37dp"
         android:layout_height="37dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="25dp"
         android:alpha="0.8"
         android:background="@drawable/bg_selectable"
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_minus"
         app:layout_constraintEnd_toEndOf="@+id/btn_plus"
         app:layout_constraintTop_toBottomOf="@id/btn_plus"
-        mapbox:layout_constraintVertical_bias="0.65">
+        app:layout_constraintVertical_bias="0.65" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_minus" />
-    </FrameLayout>
-
-
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_location"
         android:layout_width="37dp"
         android:layout_height="37dp"
@@ -202,20 +167,13 @@
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_location"
         app:layout_constraintEnd_toEndOf="@+id/btn_plus"
-        app:layout_constraintTop_toBottomOf="@+id/btn_minus">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_location" />
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/btn_minus" />
 
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_thunder"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -224,137 +182,97 @@
         android:clickable="true"
         android:elevation="@dimen/cardview_default_elevation"
         android:focusable="true"
-        app:cardCornerRadius="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_thunder"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintVertical_bias="0.5">
+        app:layout_constraintVertical_bias="0.5" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_thunder" />
-    </FrameLayout>
+    <ImageView
+        android:id="@+id/btn_network"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_bottom_item"
+        android:clickable="true"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_network"
+        app:layout_constraintBottom_toTopOf="@id/text_network"
+        app:layout_constraintEnd_toStartOf="@+id/btn_rocket"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat2"
+    <TextView
+        android:id="@+id/text_network"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:orientation="vertical"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Зазказы"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayoutCompat4"
-        app:layout_constraintHorizontal_bias="0.07"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="@+id/btn_network"
+        app:layout_constraintStart_toStartOf="@+id/btn_network" />
 
-        <FrameLayout
-            style="@style/style_bottom_frame"
-            android:rotation="45"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
+    <ImageView
+        android:id="@+id/btn_rocket"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_bottom_item"
+        android:clickable="true"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_rocket"
+        app:layout_constraintBottom_toTopOf="@id/text_rocket"
+        app:layout_constraintEnd_toStartOf="@+id/btn_tarif"
+        app:layout_constraintStart_toEndOf="@id/btn_network" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:rotation="-45"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_network" />
-        </FrameLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto_medium"
-            android:text="Зазказы"
-            android:textColor="@color/colorPrimary" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat4"
+    <TextView
+        android:id="@+id/text_rocket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat2"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayoutCompat3"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat2"
-        app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat2">
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Бордюр"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/text_network"
+        app:layout_constraintEnd_toEndOf="@+id/btn_rocket"
+        app:layout_constraintStart_toStartOf="@+id/btn_rocket" />
 
-        <FrameLayout
-            style="@style/style_bottom_frame"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_rocket" />
-        </FrameLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto_medium"
-            android:text="Бордюр"
-            android:textColor="@color/colorPrimary" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat2"
+    <ImageView
+        android:id="@+id/btn_tarif"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_bottom_item"
+        android:clickable="true"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_tarif"
+        app:layout_constraintBottom_toTopOf="@id/text_tarif"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat4"
-        app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat2">
+        app:layout_constraintStart_toEndOf="@id/btn_rocket" />
 
-        <FrameLayout
-            style="@style/style_bottom_frame"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            mapbox:layout_constraintBottom_toBottomOf="parent"
-            mapbox:layout_constraintVertical_bias="0.5">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_tarif" />
-        </FrameLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto_medium"
-            android:text="Тарифы"
-            android:textColor="@color/colorPrimary" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    <TextView
+        android:id="@+id/text_tarif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Тарифы"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/text_network"
+        app:layout_constraintEnd_toEndOf="@+id/btn_tarif"
+        app:layout_constraintStart_toStartOf="@+id/btn_tarif" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

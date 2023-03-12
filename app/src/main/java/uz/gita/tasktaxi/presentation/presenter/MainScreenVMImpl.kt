@@ -8,10 +8,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenVMImpl @Inject constructor() : MainScreenVM, ViewModel() {
-    private val intervalZoomLevel = 0.5
+    private var isManualRequest = false
+    private val intervalZoomLevel = 1.0
     private var _changeZoomLevelLiveData = MutableLiveData<Double>()
     override val changeZoomLevelLiveData: LiveData<Double> = _changeZoomLevelLiveData
-
     override fun zoomIn(zoomLevel: Double) {
         _changeZoomLevelLiveData.value = zoomLevel + intervalZoomLevel
     }
@@ -20,5 +20,5 @@ class MainScreenVMImpl @Inject constructor() : MainScreenVM, ViewModel() {
         _changeZoomLevelLiveData.value = zoomLevel - intervalZoomLevel
     }
 
-
+    fun getIsManualRequest() : Boolean = isManualRequest
 }

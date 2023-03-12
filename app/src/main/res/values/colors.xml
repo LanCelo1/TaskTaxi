@@ -14,5 +14,7 @@
     <color name="colorGreen">#00CA4C</color>
     <color name="colorAccentVariant">#bebebe</color>
     <color name="colorBottomItemEnd">#585858</color>
+    <color name="colorBottomItemEndClicked">#F25F5D5D</color>
     <color name="colorBottomItemStart">#212121</color>
+    <color name="colorBottomItemStartClicked">#F2302F2F</color>
 </resources>

@@ -14,5 +14,7 @@
     <color name="colorAccent">#bebebe</color>
     <color name="colorAccentVariant">#FFFFFF</color>
     <color name="colorBottomItemStart">#6C6C6C</color>
+    <color name="colorBottomItemStartClicked">#7A7777</color>
     <color name="colorBottomItemEnd">#BEBEBE</color>
+    <color name="colorBottomItemEndClicked">#ACA9A9</color>
 </resources>

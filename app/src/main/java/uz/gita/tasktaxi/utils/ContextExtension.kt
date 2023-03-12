@@ -1,7 +1,6 @@
 package uz.gita.tasktaxi.utils
 
 import android.Manifest
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration

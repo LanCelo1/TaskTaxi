@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="style_bottom_frame">
         <item name="android:layout_width">56dp</item>
@@ -15,6 +15,18 @@
     </style>
     <style name="ItemMenuApperance" parent="">
         <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+    <style name="ItemMenuNormalApperance" parent="ItemMenuApperance">
+        <item name="fontFamily">@font/roboto_regular</item>
+
+        <item name="layout_marginBaseline" tools:targetApi="o">20dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+    <style name="ItemMenuSmallApperance" parent="ItemMenuApperance">
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">10sp</item>
+        <item name="iconSize">16dp</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
     <style name="DialogApperance" parent="Theme.AppCompat.DayNight.Dialog">

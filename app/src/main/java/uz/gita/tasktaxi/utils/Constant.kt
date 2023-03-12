@@ -10,4 +10,5 @@ object Constant {
     var _requestLiveData = MutableLiveData<Unit>()
     val requestLiveData : LiveData<Unit> = _requestLiveData
 
+    var isWorkingService = false
 }

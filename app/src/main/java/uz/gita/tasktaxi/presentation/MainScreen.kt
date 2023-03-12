@@ -1,10 +1,14 @@
 package uz.gita.tasktaxi.presentation
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,8 +16,11 @@ import androidx.lifecycle.Observer
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.Style
+import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
@@ -31,15 +38,33 @@ import uz.gita.tasktaxi.presentation.presenter.MainScreenVMImpl
 import uz.gita.tasktaxi.service.LocationService
 import uz.gita.tasktaxi.utils.Constant
 
+
 @AndroidEntryPoint
 class MainScreen : Fragment(R.layout.screen_main) {
     private var _binding: ScreenMainBinding? = null
     private val binding get() = _binding!!
+    private var isWorking = false
+    private var isDark = false
+    private var isManualRequest = false
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
     }
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+//        binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+
+        if (!isManualRequest){
+            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+        }else {
+            if (isWorking) return@OnIndicatorPositionChangedListener
+            binding.mapView.getMapboxMap().easeTo(
+                cameraOptions {
+                    center(it)
+                }, MapAnimationOptions.mapAnimationOptions {
+                    duration(4_000)
+                }
+            )
+            isWorking = true
+        }
         binding.mapView.gestures.focalPoint = binding.mapView.getMapboxMap().pixelForCoordinate(it)
     }
     private val viewModel: MainScreenVM by viewModels<MainScreenVMImpl>()
@@ -57,14 +82,22 @@ class MainScreen : Fragment(R.layout.screen_main) {
         }
     }
     private val requestObserver = Observer<Unit> {
-        onMapReady()
-        startLocationService(ServiceAction.START)
+        checkTurnOnLocation {
+            onMapReady()
+            if (!Constant.isWorkingService) startLocationService(ServiceAction.START)
+            Constant.isWorkingService = true
+            isWorking = false
+        }
     }
     private val changeZoomObserver = Observer<Double> {
-        binding.mapView.getMapboxMap().setCamera(
-            CameraOptions.Builder()
-                .zoom(it)
-                .build()
+        val point = binding.mapView.getMapboxMap().cameraState.center
+        binding.mapView.getMapboxMap().easeTo(
+            cameraOptions {
+                center(point)
+                zoom(it)
+            }, MapAnimationOptions.mapAnimationOptions {
+                duration(500)
+            }
         )
     }
 
@@ -73,24 +106,35 @@ class MainScreen : Fragment(R.layout.screen_main) {
         _binding = ScreenMainBinding.bind(view)
 
         initView()
+        loadData()
         initListeners()
         setUpObservers()
 
         (requireActivity() as MainActivity).requestPermission()
     }
 
+    private fun loadData() {
+        isManualRequest = false
+    }
+
     @SuppressLint("FragmentLiveDataObserve")
     private fun setUpObservers() {
-        Constant.requestLiveData.observe(this, requestObserver)
+        Constant.requestLiveData.observe(viewLifecycleOwner, requestObserver)
         viewModel.changeZoomLevelLiveData.observe(this, changeZoomObserver)
     }
 
-    private fun initListeners()= with(binding){
+    private fun initListeners() = with(binding) {
         btnLocation.setOnClickListener {
+            isManualRequest = true
             (requireActivity() as MainActivity).requestPermission()
         }
         btnThunder.setOnClickListener {
-            startLocationService(ServiceAction.STOP)
+//            if (isDark)
+//                changeMapTheme(Style.TRAFFIC_DAY)
+//            else
+//                changeMapTheme(Style.TRAFFIC_NIGHT)
+//            isDark = !isDark
+
         }
         btnPlus.setOnClickListener {
             val currentZoomLevel = mapView.getMapboxMap().cameraState.zoom
@@ -100,13 +144,16 @@ class MainScreen : Fragment(R.layout.screen_main) {
             val currentZoomLevel = mapView.getMapboxMap().cameraState.zoom
             viewModel.zoomOut(currentZoomLevel)
         }
-        btnMenu.setOnClickListener{
+        btnMenu.setOnClickListener {
             (requireActivity() as MainActivity).openDrawer()
         }
     }
 
-    private fun initView() = with(binding){
-//        binding.mapView.getMapboxMap().loadStyleUri(Style.DARK)
+    private fun initView() = with(binding) {
+        if (isDarkMapTheme())
+            changeMapTheme(Style.DARK)
+        else
+            changeMapTheme(Style.SATELLITE_STREETS)
         mapView.scalebar.enabled = false
         mapView.compass.enabled = false
     }
@@ -131,12 +178,13 @@ class MainScreen : Fragment(R.layout.screen_main) {
     }
 
     private fun onMapReady() = with(binding) {
-        mapView.getMapboxMap().setCamera(
-            CameraOptions.Builder()
-                .build()
-        )
+//        mapView.getMapboxMap().setCamera(
+//            CameraOptions.Builder()
+//                .zoom(14.0)
+//                .build()
+//        )
         mapView.getMapboxMap().loadStyleUri(
-            Style.MAPBOX_STREETS
+            if (isDarkMapTheme()) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY
         ) {
             initLocationComponent()
             setupGesturesListener()
@@ -152,10 +200,23 @@ class MainScreen : Fragment(R.layout.screen_main) {
         locationComponentPlugin.updateSettings {
             this.enabled = true
             this.locationPuck = LocationPuck2D(
+                topImage =
+                AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_car_2
+//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_icon
+                ),
                 bearingImage =
                 AppCompatResources.getDrawable(
                     requireContext(),
-                    R.drawable.ic_car
+                    R.drawable.im_car_2x
+//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_bearing_icon
+                ),
+                shadowImage =
+                AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_car_2
+//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_stroke_icon
                 ),
                 scaleExpression = interpolate {
                     linear()
@@ -171,6 +232,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
                 }.toJson()
             )
         }
+
         locationComponentPlugin.addOnIndicatorPositionChangedListener(
             onIndicatorPositionChangedListener
         )
@@ -180,10 +242,8 @@ class MainScreen : Fragment(R.layout.screen_main) {
     }
 
 
-    private fun onCameraTrackingDismissed()  {
+    private fun onCameraTrackingDismissed() {
         binding.apply {
-
-            Toast.makeText(requireContext(), "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
             mapView.location
                 .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
             mapView.location
@@ -210,5 +270,49 @@ class MainScreen : Fragment(R.layout.screen_main) {
             action = serviceAction.name
             requireActivity().startService(this)
         }
+    }
+
+    private fun checkTurnOnLocation(block: () -> Unit) {
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (!isGpsEnabled) {
+            val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            alertDialog.setTitle("GPS is settings")
+            alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+            alertDialog.setPositiveButton(
+                "Settings"
+            ) { dialog, which ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                requireContext().startActivity(intent)
+            }
+            alertDialog.setNegativeButton(
+                "Cancel"
+            ) { dialog, which -> dialog.cancel() }
+            alertDialog.show()
+            return
+        }
+        block()
+    }
+
+    private fun isDarkMapTheme(): Boolean {
+        when (requireContext().resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                isDark = true
+                return true
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                isDark = false
+                return false
+            }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun changeMapTheme(style: String) {
+        binding.mapView.getMapboxMap().loadStyleUri(style)
     }
 }

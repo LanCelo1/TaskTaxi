@@ -33,10 +33,6 @@ class DefaultLocationClient(
             if(!isGpsEnabled && !isNetworkEnabled) {
                 throw LocationClient.LocationException("GPS is disabled")
             }
-
-//            val request = LocationRequest.create()
-//                .setInterval(interval)
-//                .setFastestInterval(interval)
             val request = LocationRequest.Builder(interval)
                 .setMinUpdateIntervalMillis(interval)
                 .build()

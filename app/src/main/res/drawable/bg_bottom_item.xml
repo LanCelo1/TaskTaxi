@@ -7,12 +7,17 @@
     <!--        <item android:color="#585858" android:offset="1" />-->
 
     <!--    </gradient>-->
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <gradient android:endColor="@color/colorBottomItemEndClicked"
+                android:startColor="@color/colorBottomItemStartClicked"
+                android:type="linear" />
+        </shape>
+    </item>
     <item>
         <shape android:shape="oval">
             <gradient android:endColor="@color/colorBottomItemEnd"
                 android:startColor="@color/colorBottomItemStart"
-                android:centerColor="@color/colorBottomItemEnd"
-                android:angle="285"
                 android:type="linear" />
         </shape>
     </item>

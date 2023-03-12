@@ -23,10 +23,10 @@ import kotlinx.coroutines.flow.onEach
 import uz.gita.tasktaxi.service.client.LocationClient
 import uz.gita.tasktaxi.MainActivity
 import uz.gita.tasktaxi.R
-import uz.gita.tasktaxi.data.local.LocationEntity
 import uz.gita.tasktaxi.data.model.LocationData
 import uz.gita.tasktaxi.data.model.ServiceAction
 import uz.gita.tasktaxi.data.repository.AppRepository
+import uz.gita.tasktaxi.utils.Constant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -82,7 +82,6 @@ class LocationService : Service() {
                 val long = location.longitude.toString()
                 val updatedNotification = notification.setCustomContentView(
                     createRemoteView(
-//                        "Location: (${lat.takeLast(3)}, ${long.takeLast(3)})"
                         "Location: (${lat}, ${long})"
                     )
                 )
@@ -126,6 +125,7 @@ class LocationService : Service() {
     private fun stop() {
 //        stopForeground(true)
         stopSelf()
+        Constant.isWorkingService = false
     }
 
     override fun onDestroy() {
