@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">TaskTaxi</string>
     <string name="mapbox_access_token">sk.eyJ1IjoiamFzdXJraCIsImEiOiJjbGV5amMzeXExajE4M3dta2ExZ2lwaGl3In0.zpLwM_3hfxsGyWsecooYGw</string>
+    <string name="open_drawer">open</string>
+    <string name="close_drawer">close</string>
 </resources>

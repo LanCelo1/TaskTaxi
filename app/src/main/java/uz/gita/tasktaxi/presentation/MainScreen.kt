@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
@@ -21,49 +22,51 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
 import dagger.hilt.android.AndroidEntryPoint
 import uz.gita.tasktaxi.MainActivity
 import uz.gita.tasktaxi.R
+import uz.gita.tasktaxi.data.model.DriverState
 import uz.gita.tasktaxi.data.model.ServiceAction
 import uz.gita.tasktaxi.databinding.ScreenMainBinding
 import uz.gita.tasktaxi.presentation.presenter.MainScreenVM
 import uz.gita.tasktaxi.presentation.presenter.MainScreenVMImpl
 import uz.gita.tasktaxi.service.LocationService
-import uz.gita.tasktaxi.utils.Constant
+import uz.gita.tasktaxi.utils.*
 
 
 @AndroidEntryPoint
 class MainScreen : Fragment(R.layout.screen_main) {
     private var _binding: ScreenMainBinding? = null
     private val binding get() = _binding!!
-    private var isWorking = false
+    private var isChangePositionListenerWorking = false
     private var isDark = false
     private var isManualRequest = false
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
     }
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-//        binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
-
-        if (!isManualRequest){
-            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
-        }else {
-            if (isWorking) return@OnIndicatorPositionChangedListener
+        if (!isManualRequest) {
+            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).zoom(16.0).build())
+        } else {
+            if (isChangePositionListenerWorking) return@OnIndicatorPositionChangedListener
             binding.mapView.getMapboxMap().easeTo(
                 cameraOptions {
                     center(it)
+                    zoom(16.0)
                 }, MapAnimationOptions.mapAnimationOptions {
                     duration(4_000)
                 }
             )
-            isWorking = true
+            isChangePositionListenerWorking = true
         }
         binding.mapView.gestures.focalPoint = binding.mapView.getMapboxMap().pixelForCoordinate(it)
     }
@@ -84,16 +87,14 @@ class MainScreen : Fragment(R.layout.screen_main) {
     private val requestObserver = Observer<Unit> {
         checkTurnOnLocation {
             onMapReady()
-            if (!Constant.isWorkingService) startLocationService(ServiceAction.START)
+            if (!Constant.isWorkingService) startLocationService()
             Constant.isWorkingService = true
-            isWorking = false
+            isChangePositionListenerWorking = false
         }
     }
     private val changeZoomObserver = Observer<Double> {
-        val point = binding.mapView.getMapboxMap().cameraState.center
         binding.mapView.getMapboxMap().easeTo(
             cameraOptions {
-                center(point)
                 zoom(it)
             }, MapAnimationOptions.mapAnimationOptions {
                 duration(500)
@@ -101,7 +102,19 @@ class MainScreen : Fragment(R.layout.screen_main) {
         )
     }
 
-
+    private val changeDriverStateLayerObserver = Observer<DriverState> {
+        if (it == DriverState.FREE) {
+            binding.layerFree.setBackgroundResource(R.drawable.bg_board_left_clicked)
+            binding.txtFree.setTextColor(Color.WHITE)
+            binding.layerBusy.setBackgroundResource(R.drawable.bg_board_right)
+            binding.txtBusy.setTextColor(Color.BLACK)
+        }else{
+            binding.layerBusy.setBackgroundResource(R.drawable.bg_board_right_clicked)
+            binding.txtBusy.setTextColor(Color.WHITE)
+            binding.layerFree.setBackgroundResource(R.drawable.bg_board_left)
+            binding.txtFree.setTextColor(Color.BLACK)
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = ScreenMainBinding.bind(view)
 
@@ -113,6 +126,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
         (requireActivity() as MainActivity).requestPermission()
     }
 
+
     private fun loadData() {
         isManualRequest = false
     }
@@ -121,6 +135,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
     private fun setUpObservers() {
         Constant.requestLiveData.observe(viewLifecycleOwner, requestObserver)
         viewModel.changeZoomLevelLiveData.observe(this, changeZoomObserver)
+        viewModel.changeDriverStateLiveData.observe(viewLifecycleOwner, changeDriverStateLayerObserver)
     }
 
     private fun initListeners() = with(binding) {
@@ -129,11 +144,6 @@ class MainScreen : Fragment(R.layout.screen_main) {
             (requireActivity() as MainActivity).requestPermission()
         }
         btnThunder.setOnClickListener {
-//            if (isDark)
-//                changeMapTheme(Style.TRAFFIC_DAY)
-//            else
-//                changeMapTheme(Style.TRAFFIC_NIGHT)
-//            isDark = !isDark
 
         }
         btnPlus.setOnClickListener {
@@ -147,15 +157,25 @@ class MainScreen : Fragment(R.layout.screen_main) {
         btnMenu.setOnClickListener {
             (requireActivity() as MainActivity).openDrawer()
         }
+        txtBusy.setOnClickListener {
+            viewModel.clickBusyDriverStateLayer()
+        }
+        txtFree.setOnClickListener {
+            viewModel.clickFreeDriverStateLayer()
+        }
     }
 
     private fun initView() = with(binding) {
         if (isDarkMapTheme())
             changeMapTheme(Style.DARK)
         else
-            changeMapTheme(Style.SATELLITE_STREETS)
+            changeMapTheme(Style.TRAFFIC_DAY)
         mapView.scalebar.enabled = false
         mapView.compass.enabled = false
+        mapView.logo.enabled = false
+        mapView.attribution.enabled = false
+        requireActivity().makeStatusBarTransparent()
+        constraintLayout.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight() / 2)
     }
 
 
@@ -178,11 +198,6 @@ class MainScreen : Fragment(R.layout.screen_main) {
     }
 
     private fun onMapReady() = with(binding) {
-//        mapView.getMapboxMap().setCamera(
-//            CameraOptions.Builder()
-//                .zoom(14.0)
-//                .build()
-//        )
         mapView.getMapboxMap().loadStyleUri(
             if (isDarkMapTheme()) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY
         ) {
@@ -204,19 +219,16 @@ class MainScreen : Fragment(R.layout.screen_main) {
                 AppCompatResources.getDrawable(
                     requireContext(),
                     R.drawable.ic_car_2
-//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_icon
                 ),
                 bearingImage =
                 AppCompatResources.getDrawable(
                     requireContext(),
                     R.drawable.im_car_2x
-//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_bearing_icon
                 ),
                 shadowImage =
                 AppCompatResources.getDrawable(
                     requireContext(),
                     R.drawable.ic_car_2
-//                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_stroke_icon
                 ),
                 scaleExpression = interpolate {
                     linear()
@@ -265,7 +277,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
         }
     }
 
-    private fun startLocationService(serviceAction: ServiceAction) {
+    private fun startLocationService(serviceAction: ServiceAction = ServiceAction.START) {
         Intent(requireActivity().applicationContext, LocationService::class.java).apply {
             action = serviceAction.name
             requireActivity().startService(this)
@@ -282,13 +294,13 @@ class MainScreen : Fragment(R.layout.screen_main) {
             alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
             alertDialog.setPositiveButton(
                 "Settings"
-            ) { dialog, which ->
+            ) { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 requireContext().startActivity(intent)
             }
             alertDialog.setNegativeButton(
                 "Cancel"
-            ) { dialog, which -> dialog.cancel() }
+            ) { dialog, _ -> dialog.cancel() }
             alertDialog.show()
             return
         }

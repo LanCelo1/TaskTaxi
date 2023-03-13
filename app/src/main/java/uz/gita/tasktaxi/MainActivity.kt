@@ -2,15 +2,18 @@ package uz.gita.tasktaxi
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import uz.gita.tasktaxi.databinding.ActivityMainBinding
 import uz.gita.tasktaxi.utils.Constant
 import uz.gita.tasktaxi.utils.PermissionUtility
+import uz.gita.tasktaxi.utils.makeStatusBarTransparent
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
@@ -26,9 +29,23 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun initViews() = with(binding) {
-        actionBarToggle = ActionBarDrawerToggle(this@MainActivity, drawerLayout, 0, 0)
+        actionBarToggle = ActionBarDrawerToggle(this@MainActivity, drawerLayout, R.string.open_drawer, R.string.close_drawer)
         drawerLayout.addDrawerListener(actionBarToggle)
         actionBarToggle.syncState()
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                makeStatusBarTransparent()
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+            }
+        })
     }
 
     override fun onRequestPermissionsResult(
@@ -71,4 +88,5 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     fun openDrawer(){
         binding.drawerLayout.openDrawer(GravityCompat.START, true)
     }
+
 }
