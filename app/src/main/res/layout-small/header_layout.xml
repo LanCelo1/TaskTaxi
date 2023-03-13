@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/image_avatar"
+        android:src="@drawable/im_avatar"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        />
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_marginTop="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jasur"
+        android:textSize="12sp"
+        android:textColor="@color/colorPrimary"
+        android:fontFamily="@font/roboto_medium"
+        />
+
+    <TextView
+        android:layout_marginTop="2dp"
+        android:id="@+id/text_phone"
+        android:textSize="10sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+998930057059"
+        />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
