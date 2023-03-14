@@ -56,13 +56,13 @@ class MainScreen : Fragment(R.layout.screen_main) {
     }
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         if (!isManualRequest) {
-            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).zoom(16.0).build())
         } else {
             if (isChangePositionListenerWorking) return@OnIndicatorPositionChangedListener
             binding.mapView.getMapboxMap().easeTo(
                 cameraOptions {
                     center(it)
-//                    zoom(16.0)
+                    zoom(16.0)
                 }, MapAnimationOptions.mapAnimationOptions {
                     duration(4_000)
                 }

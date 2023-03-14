@@ -67,7 +67,7 @@ class LocationService : Service() {
         val notification = NotificationCompat.Builder(this, "location")
             .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setCustomContentView(createRemoteView("Location: null"))
+            .setCustomContentView(createRemoteView("Location: not identified"))
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setOngoing(true)
 
