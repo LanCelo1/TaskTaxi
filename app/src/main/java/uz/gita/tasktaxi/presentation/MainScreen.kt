@@ -48,6 +48,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
     private var _binding: ScreenMainBinding? = null
     private val binding get() = _binding!!
     private var isChangePositionListenerWorking = false
+    private var isChangeBearingListenerWorking = false
     private var isDark = false
     private var isManualRequest = false
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
@@ -55,13 +56,13 @@ class MainScreen : Fragment(R.layout.screen_main) {
     }
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         if (!isManualRequest) {
-            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).zoom(16.0).build())
+            binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
         } else {
             if (isChangePositionListenerWorking) return@OnIndicatorPositionChangedListener
             binding.mapView.getMapboxMap().easeTo(
                 cameraOptions {
                     center(it)
-                    zoom(16.0)
+//                    zoom(16.0)
                 }, MapAnimationOptions.mapAnimationOptions {
                     duration(4_000)
                 }
@@ -133,7 +134,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
 
     @SuppressLint("FragmentLiveDataObserve")
     private fun setUpObservers() {
-        Constant.requestLiveData.observe(viewLifecycleOwner, requestObserver)
+        EventBus.requestLiveData.observe(viewLifecycleOwner, requestObserver)
         viewModel.changeZoomLevelLiveData.observe(this, changeZoomObserver)
         viewModel.changeDriverStateLiveData.observe(viewLifecycleOwner, changeDriverStateLayerObserver)
     }
@@ -141,6 +142,7 @@ class MainScreen : Fragment(R.layout.screen_main) {
     private fun initListeners() = with(binding) {
         btnLocation.setOnClickListener {
             isManualRequest = true
+            isChangeBearingListenerWorking = false
             (requireActivity() as MainActivity).requestPermission()
         }
         btnThunder.setOnClickListener {
@@ -148,10 +150,12 @@ class MainScreen : Fragment(R.layout.screen_main) {
         }
         btnPlus.setOnClickListener {
             val currentZoomLevel = mapView.getMapboxMap().cameraState.zoom
+            isChangeBearingListenerWorking = false
             viewModel.zoomIn(currentZoomLevel)
         }
         btnMinus.setOnClickListener {
             val currentZoomLevel = mapView.getMapboxMap().cameraState.zoom
+            isChangeBearingListenerWorking = false
             viewModel.zoomOut(currentZoomLevel)
         }
         btnMenu.setOnClickListener {

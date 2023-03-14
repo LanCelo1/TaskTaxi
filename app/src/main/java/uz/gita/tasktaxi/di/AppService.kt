@@ -6,8 +6,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import uz.gita.tasktaxi.data.repository.AppRepository
 import uz.gita.tasktaxi.data.repository.AppRepositoryImpl
-import uz.gita.tasktaxi.presentation.presenter.MainScreenVM
-import uz.gita.tasktaxi.presentation.presenter.MainScreenVMImpl
 import javax.inject.Singleton
 
 @Module

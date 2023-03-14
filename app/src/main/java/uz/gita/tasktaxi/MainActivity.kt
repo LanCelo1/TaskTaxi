@@ -11,9 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import uz.gita.tasktaxi.databinding.ActivityMainBinding
-import uz.gita.tasktaxi.utils.Constant
-import uz.gita.tasktaxi.utils.PermissionUtility
-import uz.gita.tasktaxi.utils.makeStatusBarTransparent
+import uz.gita.tasktaxi.utils.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Constant._requestLiveData.value = Unit
+        EventBus._requestLiveData.value = Unit
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     fun requestPermission() {
         if (PermissionUtility.hasLocationPermission(this)) {
-            Constant._requestLiveData.value = Unit
+            EventBus._requestLiveData.value = Unit
         } else {
             EasyPermissions.requestPermissions(
                 this,
